@@ -4,7 +4,7 @@ Gem::Specification.new do |s|
   s.date           = "#{Time.now.strftime("%Y-%m-%-d")}"
   s.summary        = 'CLuDA'
   s.license        = 'MIT'
-  s.description    = 'CLustering Data Analysis  gem'
+  s.description    = 'CLustering Data Analysis gem'
   s.authors        = ['Enrique Figuerola']
   s.email          = 'hard_rock15@msn.com'
   s.files          = []

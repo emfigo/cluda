@@ -1,3 +1,4 @@
+require 'cluda'
 require 'rspec'
 
 RSpec.configure do |config|
