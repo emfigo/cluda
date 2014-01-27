@@ -1,21 +1,24 @@
 module Cluda
   class InvalidPoint < RuntimeError; end
   
-  class Distance
-    def self.distance(x, y)
-      raise NoImplementedError.new("You must implement distance method")
+  class Distance 
+    extend Math
+    
+    def self.distance(x0, x)
+      raise ::NotImplementedError.new("You must implement distance method")
     end
 
     protected
 
-    def self.validate(point)
-      if point.is_a?(Hash)
-        if point.include?(:x) && point.include?(:y)
-          return point if point[:x].is_a?(Numeric) && point[:y].is_a?(Numeric)
-        end
+    def self.validate( data )
+      points = data.is_a?(Array) ? data : [ data ]  
+      points.each do |point|
+        raise InvalidPoint unless  point.is_a?(Hash) &&  
+                                   point.include?(:x) && point.include?(:y) &&
+                                   point[:x].is_a?(Numeric) && point[:y].is_a?(Numeric)
       end
 
-      raise InvalidPoint 
+      points 
     end
   end
 end
