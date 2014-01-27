@@ -7,3 +7,17 @@ RSpec::Core::RakeTask.new(:spec) do |t|
 end
 
 task :default => :spec
+
+task :environment do
+  require 'cluda'
+end
+
+task :console => :environment do 
+  require 'pry'
+
+  Pry.config.prompt = [ 
+    proc { "cluda> "} 
+  ]
+
+  Pry.start
+end
