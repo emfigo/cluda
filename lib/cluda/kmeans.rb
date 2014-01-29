@@ -15,6 +15,26 @@ module Cluda
 
     end
 
+    protected 
+
+    def self.nearest_centroid(point, centroids, _class = Cluda::Euclidean )
+      return nil if centroids.empty?
+      
+      _class.validate( point )
+      nearest_centroid = centroids[0]
+      min_distance = _class.distance(point, nearest_centroid)
+
+      centroids.each do |centroid|
+        new_distance = _class.distance(point, centroid)
+        if new_distance < min_distance
+          min_distance = new_distance
+          nearest_centroid = centroid
+        end
+      end
+
+      nearest_centroid
+    end
+
     def self.centroids( list , k, _class = Cluda::Euclidean )
       _class.validate( list )
 

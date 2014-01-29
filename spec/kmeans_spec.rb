@@ -70,8 +70,20 @@ describe Cluda::Kmeans do
       centroids.all?{ |centroid| list_a.include?(centroid) }.should be_true
     end
   end
-  context "Find the nearest centroid" do
-    it "should blah"
+  context "Find the nearest centroid for specific point" do
+    it "centroids are empty and a point is passed should return nil" do
+      Cluda::Kmeans.nearest_centroid( point_a, empty_list ).should be_nil
+    end
+    
+    it "if we have centroids and none valid point is passed should raise an error" do
+      expect{ Cluda::Kmeans.nearest_centroid(not_valid_point, [point_a]) }.to raise_error( Cluda::InvalidPoint ) 
+    end
+    
+    it "if we have centroids and a valid point is passed should calculated correctly" do
+      Cluda::Kmeans.nearest_centroid( point_a, [point_a, point_j] ).should == point_a
+      Cluda::Kmeans.nearest_centroid( point_a, [point_j] ).should == point_j
+      Cluda::Kmeans.nearest_centroid( point_a, [point_h, point_j] ).should == point_h
+    end
   end
   context "If centroids switch update them" do 
     it "should blah"
