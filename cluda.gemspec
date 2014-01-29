@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.description    = 'CLustering Data Analysis gem'
   s.authors        = ['Enrique Figuerola']
   s.email          = 'hard_rock15@msn.com'
-  s.files          = ['lib/cluda.rb', 'lib/cluda/distances/distance.rb', 'lib/cluda/distances/manhattan.rb', 'lib/cluda/distances/euclidean.rb', 'lib/cluda/distances/chebyshev.rb']
+  s.files          = ['lib/cluda.rb']
   s.require_paths  = ['lib']
   s.homepage       = 'https://github.com/emfigo/cluda'
 
