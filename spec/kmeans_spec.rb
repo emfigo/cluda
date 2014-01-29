@@ -61,11 +61,11 @@ describe Cluda::Kmeans do
     end
 
     it "should return an empty list if no points are passed through" do
-      Cluda::Kmeans.centroids( empty_list, k_1 ).should be_empty
+      Cluda::Kmeans.initialize_centroids( empty_list, k_1 ).should be_empty
     end
     
     it "should return k random centroids" do
-      centroids = Cluda::Kmeans.centroids( list_a, k_1 )
+      centroids = Cluda::Kmeans.initialize_centroids( list_a, k_1 )
       centroids.size.should == k_1
       centroids.all?{ |centroid| list_a.include?(centroid) }.should be_true
     end
@@ -85,7 +85,31 @@ describe Cluda::Kmeans do
       Cluda::Kmeans.nearest_centroid( point_a, [point_h, point_j] ).should == point_h
     end
   end
-  context "If centroids switch update them" do 
-    it "should blah"
+  context "Get the correct clustering for a group of points" do
+    let(:k_2)             { 1 }
+    let(:k_3)             { 3 }
+    
+    it "devide correctly the data for one cluster" do
+      clusters = Cluda::Kmeans.classify( list_a, k_2 )
+      clusters.keys.size.should == k_2
+      clusters[ clusters.keys.first ].should == list_a
+    end
+
+    it "devide correctly the data for more than 2 centroids in a compact cloud of points" do
+      clusters = Cluda::Kmeans.classify( list_b, k_3 )
+      clusters.keys.size.should == k_3
+    end
+    
+    it "devide correctly the data for more than one cluster" do
+      cluster_a = [ point_a, point_b, point_c, point_d ]
+      cluster_b = [ point_e, point_f, point_g, point_h, point_i, point_j]
+
+      clusters = Cluda::Kmeans.classify( list_a, k_1 )
+      clusters.keys.size.should == k_1
+
+      clusters.each do |(key,value)| 
+        [cluster_a, cluster_b].include?(value).should be_true 
+      end
+    end
   end
 end
