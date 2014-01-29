@@ -37,6 +37,7 @@ module Cluda
       return nil if centroids.empty?
       
       _class.validate( point )
+      
       nearest_centroid = centroids[0]
       min_distance = _class.distance(point, nearest_centroid)
 
@@ -75,7 +76,7 @@ module Cluda
       sorted_list = list.sort
       len = list.size
 
-      (sorted_list[(len - 1) / 2] + sorted_list[len / 2]) / 2
+      sorted_list[( (len / 2 ) + 0.5 ).floor]
     end
 
     def self.get_key_values( points, key )
