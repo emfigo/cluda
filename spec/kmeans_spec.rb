@@ -57,10 +57,6 @@ describe Cluda::Kmeans do
                             point_h, 
                             point_i, 
                             point_j ] }
-  let(:list_c)          { [ point_k, 
-                            point_l, 
-                            point_m, 
-                            point_n ] }
 
   context "Choose K items for calculating the centroids" do
     it "verify that all points are valid" do
@@ -122,6 +118,19 @@ describe Cluda::Kmeans do
   end
   
   context "Smart clustering" do
-
+    let(:list_c)          { [ point_a, 
+                              point_b, 
+                              point_c, 
+                              point_d ] }
+    let(:list_d)          { [ point_k, 
+                              point_l, 
+                              point_m, 
+                              point_n ] }
+    
+    it "devide data correctly for 2 clusters one created by CluDA" do
+      clusters = Cluda::Kmeans.classify( list_c )
+      centroids = clusters.keys
+      Cluda::Kmeans.classify( list_d, centroids: centroids ).keys.size.should == 2
+    end
   end
 end
