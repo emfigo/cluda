@@ -44,7 +44,8 @@ module Cluda
         output = init_output(centroids)
         
         list.each do |point|
-          output[nearest_centroid(point, centroids, _class)] << point
+          centroid, distance = nearest_centroid(point, centroids, _class)
+          output[centroid] << point.merge( distance: distance )
         end
 
         iter += 1
@@ -73,7 +74,7 @@ module Cluda
         end
       end
 
-      nearest_centroid
+      [nearest_centroid, min_distance]
     end
 
     def self.initialize_centroids( list , k )
