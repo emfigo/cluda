@@ -6,6 +6,16 @@ module Cluda
   def self.valid_class?( name )
     ['euclidean', 'chebyshev', 'manhattan'].include?( name.downcase )
   end
+
+  def self.validate_centroids( centroids )
+    validate(centroids)
+   
+    centroids.each do |point|
+      raise InvalidPoint unless  point.include?(:distance)
+    end
+
+    centroids
+  end
   
   def self.validate( data )
     points = data.is_a?(Array) ? data : [ data ]  

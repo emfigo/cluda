@@ -31,13 +31,13 @@ module Cluda
       raise InvalidDistanceMethod unless Cluda::valid_class?(@opts[:distance_method])
      
       _class = Cluda.const_get( @opts[:distance_method].downcase.capitalize )
-      Cluda.validate( list )
       
-      centroids = @opts[:centroids].nil? || @opts[:centroids].empty? ? initialize_centroids( list , @opts[:k]) : @opts[:centroids]
-      Cluda.validate( centroids )
+      Cluda.validate( list ) 
+      Cluda.validate_centroids( @opts[:centroids] ) unless @opts[:centroids].nil?
 
       iter = 1
       max_iterations = @opts[:max_iterations]
+      centroids = @opts[:centroids].nil? || @opts[:centroids].empty? ? initialize_centroids( list , @opts[:k]) : @opts[:centroids]
       previous_centroids = nil
 
       while (iter < max_iterations) && (previous_centroids != centroids)

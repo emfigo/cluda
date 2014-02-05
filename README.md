@@ -27,9 +27,9 @@ Optional:
  * k                => Number of clusters
  * centroids        => If you wish to work with specific initial centroids
  * distance_method  => Should be a string in lowercase and can be: 
-                         'euclidean' (default)
-                         'manhattan'
-                         'chebyshev'
+                         * 'euclidean' (default)
+                         * 'manhattan'
+                         * 'chebyshev'
  * be_smart         => In case is necessary CluDA will create new centroids to the set passed as parameter 
  * max_iterations   => Natural > 0 for local minimums. 50 (default)
 
