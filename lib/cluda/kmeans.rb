@@ -6,7 +6,19 @@ module Cluda
   class InvalidDistanceMethod < RuntimeError; end
 
   class Kmeans
-    def self.classify( list, k, class_name = 'euclidean', max_iterations = 50 )
+
+    #Classify the points using KMeans as the clustering algorithm
+    #
+    #Example:
+    #   >> points = [ { x: 1, y: 1}, { x: 2, y: 1}, { x: 1, y: 2}, { x: 2, y: 2}, { x: 4, y: 6}, { x: 5, y: 7}, { x: 5, y: 6}, { x: 5, y: 5}, { x: 6, y: 6}, { x: 6, y: 5}]
+    #   >> Cluda::Kmeans.classify( points, 1, 'euclidean', true, 50)
+    #Arguments:
+    #   list:           (Array [Hash] )
+    #   k:              (Numeric) *optional*
+    #   class_name:     (String) 
+    #   be_smart:       (Boolean)
+    #   max_iterations: (Numeric)
+    def self.classify( list, k = 1, class_name = 'euclidean', be_smart = false, max_iterations = 50 )
       raise InvalidDistanceMethod unless valid_class?(class_name)
       
       _class = Cluda.const_get( class_name.downcase.capitalize )
