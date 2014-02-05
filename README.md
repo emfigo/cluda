@@ -20,20 +20,18 @@ CluDA is prepared to use any clustering algorithm that is implemented within it 
 Cluda::X.classify( list, k: K, distance_method: DISTANCE, max_iterations: MAX )
 ```
 
-Mandatory
----------
- list             =>  List of points that you wish to classify
+Mandatory:
+ * list             =>  List of points that you wish to classify
 
-Optional
---------
- k                => Number of clusters
- centroids        => If you wish to work with specific initial centroids
- distance_method  => Should be a string in lowercase and can be: 
+Optional:
+ * k                => Number of clusters
+ * centroids        => If you wish to work with specific initial centroids
+ * distance_method  => Should be a string in lowercase and can be: 
                          'euclidean' (default)
                          'manhattan'
                          'chebyshev'
- be_smart         => In case is necessary CluDA will create new centroids to the set passed as parameter 
- max_iterations   => Natural > 0 for local minimums. 50 (default)
+ * be_smart         => In case is necessary CluDA will create new centroids to the set passed as parameter 
+ * max_iterations   => Natural > 0 for local minimums. 50 (default)
 
 The output will always be an hash with the centroids and the points clustered to the corresponding centroid.
 
