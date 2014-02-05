@@ -57,11 +57,15 @@ describe Cluda::Kmeans do
                             point_h, 
                             point_i, 
                             point_j ] }
+  let(:list_c)          { [ point_k, 
+                            point_l, 
+                            point_m, 
+                            point_n ] }
 
   context "Choose K items for calculating the centroids" do
     it "verify that all points are valid" do
       not_valid_list = [ point_a, point_b, point_c, point_d, not_valid_point ]
-      expect{ Cluda::Kmeans.classify( not_valid_list, k_1 ) }.to raise_error(Cluda::InvalidPoint)
+      expect{ Cluda::Kmeans.classify( not_valid_list, k: k_1 ) }.to raise_error(Cluda::InvalidPoint)
     end
 
     it "should return an empty list if no points are passed through" do
@@ -94,13 +98,13 @@ describe Cluda::Kmeans do
     let(:k_3)             { 3 }
     
     it "devide correctly the data for one cluster" do
-      clusters = Cluda::Kmeans.classify( list_a, k_2 )
+      clusters = Cluda::Kmeans.classify( list_a, k: k_2 )
       clusters.keys.size.should == k_2
       clusters[ clusters.keys.first ].should == list_a
     end
 
     it "devide correctly the data for more than 2 centroids in a compact cloud of points" do
-      clusters = Cluda::Kmeans.classify( list_b, k_3 )
+      clusters = Cluda::Kmeans.classify( list_b, k: k_3 )
       clusters.keys.size.should == k_3
     end
     
@@ -108,12 +112,16 @@ describe Cluda::Kmeans do
       cluster_a = [ point_a, point_b, point_c, point_d ]
       cluster_b = [ point_e, point_f, point_g, point_h, point_i, point_j]
 
-      clusters = Cluda::Kmeans.classify( list_a, k_1 )
+      clusters = Cluda::Kmeans.classify( list_a, k: k_1 )
       clusters.keys.size.should == k_1
 
       clusters.each do |(key,value)| 
         [cluster_a, cluster_b].include?(value).should be_true 
       end
     end
+  end
+  
+  context "Smart clustering" do
+
   end
 end

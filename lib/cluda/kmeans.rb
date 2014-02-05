@@ -7,26 +7,36 @@ module Cluda
 
   class Kmeans
 
+    DEFAULT_OPTS = { k: 1, 
+                     centroids: [], 
+                     distance_method: 'euclidean', 
+                     be_smart: false, 
+                     max_iterations: 50 }
+
     #Classify the points using KMeans as the clustering algorithm
     #
     #Example:
     #   >> points = [ { x: 1, y: 1}, { x: 2, y: 1}, { x: 1, y: 2}, { x: 2, y: 2}, { x: 4, y: 6}, { x: 5, y: 7}, { x: 5, y: 6}, { x: 5, y: 5}, { x: 6, y: 6}, { x: 6, y: 5}]
-    #   >> Cluda::Kmeans.classify( points, 1, 'euclidean', true, 50)
+    #   >> Cluda::Kmeans.classify( points, k: 1, distance_method: 'euclidean', be_smart: true, max_iterations: 50)
     #Arguments:
-    #   list:           (Array [Hash] )
-    #   k:              (Numeric) *optional*
-    #   class_name:     (String) 
-    #   be_smart:       (Boolean)
-    #   max_iterations: (Numeric)
-    def self.classify( list, k = 1, class_name = 'euclidean', be_smart = false, max_iterations = 50 )
-      raise InvalidDistanceMethod unless valid_class?(class_name)
+    #   list:            (Array [Hash] )
+    #   k:               (Numeric) *optional*
+    #   centroids:       (Array) *optional*
+    #   distance_method: (String) *optional*
+    #   be_smart:        (Boolean) *optional*
+    #   max_iterations:  (Numeric) *optional*
+    def self.classify( list, opts = {} )
+      @opts = DEFAULT_OPTS.merge(opts)
       
-      _class = Cluda.const_get( class_name.downcase.capitalize )
+      raise InvalidDistanceMethod unless valid_class?(@opts[:distance_method])
+     
+      _class = Cluda.const_get( @opts[:distance_method].downcase.capitalize )
       _class.validate( list )
 
       iter = 1
+      max_iterations = @opts[:max_iterations]
       previous_centroids = nil
-      centroids = initialize_centroids( list , k, _class )
+      centroids = initialize_centroids( list , @opts[:k], _class )
 
       while (iter < max_iterations) && (previous_centroids != centroids)
         output = init_output(centroids)
