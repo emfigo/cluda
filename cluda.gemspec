@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name           = 'cluda'
-  s.version        = '0.0.1'
-  s.date           = "#{Time.now.strftime("%Y-%m-%-d")}"
+  s.version        = '0.0.2'
+  s.date           = "#{Time.now.strftime("%Y-%m-%d")}"
   s.summary        = 'CLuDA'
   s.license        = 'MIT'
   s.description    = 'CLustering Data Analysis gem'
