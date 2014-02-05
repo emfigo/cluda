@@ -32,11 +32,13 @@ module Cluda
      
       _class = Cluda.const_get( @opts[:distance_method].downcase.capitalize )
       Cluda.validate( list )
+      
+      centroids = @opts[:centroids].nil? || @opts[:centroids].empty? ? initialize_centroids( list , @opts[:k]) : @opts[:centroids]
+      Cluda.validate( centroids )
 
       iter = 1
       max_iterations = @opts[:max_iterations]
       previous_centroids = nil
-      centroids = @opts[:centroids].nil? ? initialize_centroids( list , @opts[:k]) : @opts[:centroids]
 
       while (iter < max_iterations) && (previous_centroids != centroids)
         output = init_output(centroids)
