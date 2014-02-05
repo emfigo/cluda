@@ -1,7 +1,6 @@
 require 'cluda/distances/manhattan'
 require 'cluda/distances/euclidean'
 require 'cluda/distances/chebyshev'
-require 'cluda/cluda_common'
 
 module Cluda
   class InvalidDistanceMethod < RuntimeError; end
@@ -32,12 +31,12 @@ module Cluda
       raise InvalidDistanceMethod unless Cluda::valid_class?(@opts[:distance_method])
      
       _class = Cluda.const_get( @opts[:distance_method].downcase.capitalize )
-      _class.validate( list )
+      Cluda.validate( list )
 
       iter = 1
       max_iterations = @opts[:max_iterations]
       previous_centroids = nil
-      centroids = @opts[:centroids].nil? ? initialize_centroids( list , @opts[:k], _class ) : @opts[:centroids]
+      centroids = @opts[:centroids].nil? ? initialize_centroids( list , @opts[:k]) : @opts[:centroids]
 
       while (iter < max_iterations) && (previous_centroids != centroids)
         output = init_output(centroids)
@@ -59,7 +58,7 @@ module Cluda
     def self.nearest_centroid(point, centroids, _class = Cluda::Euclidean )
       return nil if centroids.empty?
       
-      _class.validate( point )
+      Cluda.validate( point )
       
       nearest_centroid = centroids[0]
       min_distance = _class.distance(point, nearest_centroid)
@@ -75,8 +74,8 @@ module Cluda
       nearest_centroid
     end
 
-    def self.initialize_centroids( list , k, _class = Cluda::Euclidean )
-      _class.validate( list )
+    def self.initialize_centroids( list , k )
+      Cluda.validate( list )
 
       return [] if list.empty? || k > list.size
 

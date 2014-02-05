@@ -14,13 +14,13 @@ describe Cluda::Distance do
   
   context "Validate points" do
     it "validate a correct point" do
-      Cluda::Distance.validate(valid_point)
+      Cluda.validate(valid_point)
     end
     
     it "not validate an invalid point" do
-      expect{ Cluda::Distance.validate(not_valid_point) }.to raise_error( Cluda::InvalidPoint )
-      expect{ Cluda::Distance.validate(not_valid_point2) }.to raise_error( Cluda::InvalidPoint )
-      expect{ Cluda::Distance.validate(not_valid_point3) }.to raise_error( Cluda::InvalidPoint )
+      expect{ Cluda.validate(not_valid_point) }.to raise_error( Cluda::InvalidPoint )
+      expect{ Cluda.validate(not_valid_point2) }.to raise_error( Cluda::InvalidPoint )
+      expect{ Cluda.validate(not_valid_point3) }.to raise_error( Cluda::InvalidPoint )
     end
   end
 end
