@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-# 10
-# 
-# 9
+# 10   k     l
+#   
+# 9    m     n
 # 
 # 8
 # 
@@ -33,6 +33,10 @@ describe Cluda::Kmeans do
   let(:point_h)         { { x: 5, y: 5} }
   let(:point_i)         { { x: 6, y: 6} }
   let(:point_j)         { { x: 6, y: 5} }
+  let(:point_k)         { { x: 1, y: 10} }
+  let(:point_l)         { { x: 2, y: 10} }
+  let(:point_m)         { { x: 1, y: 9} }
+  let(:point_n)         { { x: 2, y: 9} }
   let(:not_valid_point) { { x: -5 } }
   let(:k_1)             { 2 }
 
