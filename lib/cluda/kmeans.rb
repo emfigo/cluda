@@ -1,6 +1,7 @@
 require 'cluda/distances/manhattan'
 require 'cluda/distances/euclidean'
 require 'cluda/distances/chebyshev'
+require 'cluda/cluda_common'
 
 module Cluda
   class InvalidDistanceMethod < RuntimeError; end
@@ -8,7 +9,7 @@ module Cluda
   class Kmeans
 
     DEFAULT_OPTS = { k: 1, 
-                     centroids: [], 
+                     centroids: nil, 
                      distance_method: 'euclidean', 
                      be_smart: false, 
                      max_iterations: 50 }
@@ -28,7 +29,7 @@ module Cluda
     def self.classify( list, opts = {} )
       @opts = DEFAULT_OPTS.merge(opts)
       
-      raise InvalidDistanceMethod unless valid_class?(@opts[:distance_method])
+      raise InvalidDistanceMethod unless Cluda::valid_class?(@opts[:distance_method])
      
       _class = Cluda.const_get( @opts[:distance_method].downcase.capitalize )
       _class.validate( list )
@@ -36,7 +37,7 @@ module Cluda
       iter = 1
       max_iterations = @opts[:max_iterations]
       previous_centroids = nil
-      centroids = initialize_centroids( list , @opts[:k], _class )
+      centroids = @opts[:centroids].nil? ? initialize_centroids( list , @opts[:k], _class ) : @opts[:centroids]
 
       while (iter < max_iterations) && (previous_centroids != centroids)
         output = init_output(centroids)
@@ -83,10 +84,6 @@ module Cluda
     end
 
     private 
-
-    def self.valid_class?( name )
-      ['euclidean', 'chebyshev', 'manhattan'].include?( name.downcase )
-    end
 
     def self.init_output(centroids) 
       centroids.each_with_object({}) do |centroid, memo|
