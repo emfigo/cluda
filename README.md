@@ -17,20 +17,22 @@ In the current version it only exist Kmeans as a clustering algorithm, but in fu
 CluDA is prepared to use any clustering algorithm that is implemented within it and call the method 'classify' to get the output. Classify is has 2 mandatory parameters and 2 optionals:
 
 ```ruby
-Cluda::X.classify( list, k, distance_method, max_iterations )
+Cluda::X.classify( list, k: K, distance_method: DISTANCE, max_iterations: MAX )
 ```
 
 Mandatory
 ---------
  list             =>  List of points that you wish to classify
- k                =>  Number of clusters
 
 Optional
 --------
+ k                => Number of clusters
+ centroids        => If you wish to work with specific initial centroids
  distance_method  => Should be a string in lowercase and can be: 
                          'euclidean' (default)
                          'manhattan'
                          'chebyshev'
+ be_smart         => In case is necessary CluDA will create new centroids to the set passed as parameter 
  max_iterations   => Natural > 0 for local minimums. 50 (default)
 
 The output will always be an hash with the centroids and the points clustered to the corresponding centroid.
@@ -43,7 +45,7 @@ Anytime that you want to use it, simply follow Cluda by the 'Kmeans' class. Show
   require 'cluda'
   ...
   points = [ { x: 1, y: 1}, { x: 2, y: 1}, { x: 1, y: 2}, { x: 2, y: 2}, { x: 4, y: 6}, { x: 5, y: 7}, { x: 5, y: 6}, { x: 5, y: 5}, { x: 6, y: 6}, { x: 6, y: 5}]
-  Cluda::Kmeans.classify( points, 1)
+  Cluda::Kmeans.classify( points, k: 1)
   ...
 ```
 
@@ -66,7 +68,7 @@ Output
 Other examples followed by the outputs:
 
 ```ruby
-  Cluda::Kmeans.classify( points, 2, 'euclidean' )
+  Cluda::Kmeans.classify( points, k: 2, distance_method: 'euclidean' )
 ```
 
 Output
@@ -85,7 +87,7 @@ Output
 -------------------
 
 ```ruby
-  Cluda::Kmeans.classify( points, 2, 'manhattan' )
+  Cluda::Kmeans.classify( points, k: 2, distance_method: 'manhattan' )
 ```
 
 Output
@@ -105,7 +107,7 @@ Output
 --------------------
 
 ```ruby
-  Cluda::Kmeans.classify( points, 2, 'chebyshev' )
+  Cluda::Kmeans.classify( points, k: 2, distance_method: 'chebyshev' )
 ```
 
 Output
