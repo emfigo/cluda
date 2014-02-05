@@ -37,7 +37,7 @@ module Cluda
 
       iter = 1
       max_iterations = @opts[:max_iterations]
-      centroids = @opts[:centroids].nil? || @opts[:centroids].empty? ? initialize_centroids( list , @opts[:k]) : @opts[:centroids]
+      centroids = @opts[:centroids].nil? || @opts[:centroids].empty? ? initialize_centroids( list , @opts[:k]) : process_centroids( @opts[:centroids] )
       previous_centroids = nil
 
       while (iter < max_iterations) && (previous_centroids != centroids)
@@ -90,6 +90,14 @@ module Cluda
     def self.init_output(centroids) 
       centroids.each_with_object({}) do |centroid, memo|
         memo[centroid] = []
+      end
+    end
+
+    def self.process_centroids(centroids)
+      centroids.each_with_object([]) do |point, memo|
+        @median_centroid = point[:distance] if @median_centroid.nil?  || @median_centroid < point[:distance]
+          
+        memo << { x: point[:x], y: point[:y] }
       end
     end
 
