@@ -153,5 +153,11 @@ describe Cluda::Kmeans do
       centroids = Cluda.median_for_centroids( clusters )
       Cluda::Kmeans.classify( list_d, centroids: centroids, be_smart: true ).keys.size.should == 2
     end
+    
+    it "don't create another cluster when is not necessary" do
+      clusters = Cluda::Kmeans.classify( list_a )
+      centroids = Cluda.median_for_centroids( clusters )
+      Cluda::Kmeans.classify( list_c, centroids: centroids, be_smart: true ).keys.size.should == 1
+    end
   end
 end
