@@ -148,7 +148,7 @@ describe Cluda::Kmeans do
                               point_m, 
                               point_n ] }
     
-    it "devide data correctly for 2 clusters one created by CluDA" do
+    it "devide data correctly for 2 clusters one created by CluDA and distance percentage of 50%" do
       clusters = Cluda::Kmeans.classify( list_c )
       centroids = Cluda.median_for_centroids( clusters )
       Cluda::Kmeans.classify( list_c + list_d, centroids: centroids, be_smart: true, margin_distance_percentage: 0.5 ).keys.size.should == 2

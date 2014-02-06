@@ -36,18 +36,20 @@ module Cluda
       Cluda.validate_centroids( @opts[:centroids] ) unless @opts[:be_smart] || @opts[:centroids].nil?
 
       iter = 1
-      max_iterations = @opts[:max_iterations]
-      centroids = @opts[:centroids].nil? || @opts[:centroids].empty? ? initialize_centroids( list , @opts[:k]) : process_centroids( @opts[:centroids] )
-      previous_centroids = nil
+      max_iterations             = @opts[:max_iterations]
+      centroids                  = @opts[:centroids].nil? || @opts[:centroids].empty? ? initialize_centroids( list , @opts[:k]) : process_centroids( @opts[:centroids] )
+      previous_centroids         = nil
+      smart_clustering           = @opts[:be_smart]
+      margin_distance_percentage = @opts[:margin_distance_percentage]
 
       while (iter < max_iterations) && (previous_centroids != centroids)
         output = init_output(centroids)
-        margin = @opts[:be_smart] ? @median_centroid * @opts[:margin_distance_percentage] : 0
+        margin = smart_clustering ? @median_centroid * margin_distance_percentage : 0
 
         list.each do |point|
           centroid, distance = nearest_centroid(point, centroids, _class)
           
-          if @opts[:be_smart] && distance > ( @median_centroid + margin )
+          if smart_clustering && distance > ( @median_centroid + margin )
             @median_centroid = distance
             centroids << point
             create_centroid(point, output)
