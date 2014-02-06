@@ -33,7 +33,7 @@ module Cluda
       _class = Cluda.const_get( @opts[:distance_method].downcase.capitalize )
       
       Cluda.validate( list ) 
-      Cluda.validate_centroids( @opts[:centroids] ) unless !@opts[:be_smart] || @opts[:centroids].nil?
+      Cluda.validate_centroids( @opts[:centroids] ) if @opts[:be_smart] 
 
       iter = 1
       max_iterations             = @opts[:max_iterations]
