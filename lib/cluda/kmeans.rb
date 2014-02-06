@@ -3,8 +3,6 @@ require 'cluda/distances/euclidean'
 require 'cluda/distances/chebyshev'
 
 module Cluda
-  class InvalidDistanceMethod < RuntimeError; end
-
   class Kmeans
 
     DEFAULT_OPTS = { k: 1, 
@@ -23,17 +21,17 @@ module Cluda
     #   k:               (Numeric) *optional*
     #   centroids:       (Array) *optional*
     #   distance_method: (String) *optional*
-    #   be_smart:        (Boolean) *optional*
+    #   be_smart:        (Boolean) *optional* [If you want CluDA to be smart you have to specify the centroids ]
     #   max_iterations:  (Numeric) *optional*
     def self.classify( list, opts = {} )
       @opts = DEFAULT_OPTS.merge(opts)
       
-      raise InvalidDistanceMethod unless Cluda::valid_class?(@opts[:distance_method])
+      raise Cluda::InvalidDistanceMethod unless Cluda::valid_class?(@opts[:distance_method])
      
       _class = Cluda.const_get( @opts[:distance_method].downcase.capitalize )
       
       Cluda.validate( list ) 
-      Cluda.validate_centroids( @opts[:centroids] ) unless @opts[:centroids].nil?
+      Cluda.validate_centroids( @opts[:centroids] ) unless @opts[:be_smart] || @opts[:centroids].nil?
 
       iter = 1
       max_iterations = @opts[:max_iterations]
@@ -95,17 +93,10 @@ module Cluda
 
     def self.process_centroids(centroids)
       centroids.each_with_object([]) do |point, memo|
-        @median_centroid = point[:distance] if @median_centroid.nil?  || @median_centroid < point[:distance]
+        @median_centroid = point[:median] if @median_centroid.nil?  || @median_centroid < point[:median]
           
         memo << { x: point[:x], y: point[:y] }
       end
-    end
-
-    def self.median( list )
-      sorted_list = list.sort
-      len = list.size
-
-      sorted_list[( (len / 2 ) + 0.5 ).floor]
     end
 
     def self.get_key_values( points, key )
@@ -114,8 +105,8 @@ module Cluda
     
     def self.move_centroids( output )
       output.map do |(key, value)|
-        x = median( get_key_values(value, :x) )
-        y = median( get_key_values(value, :y) )
+        x = Cluda.median( get_key_values(value, :x) )
+        y = Cluda.median( get_key_values(value, :y) )
         
         { x: x, y: y }
       end
