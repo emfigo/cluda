@@ -121,7 +121,7 @@ describe Cluda::Kmeans do
     end
   end
 
-  context "each point in a cluste should contain all the data needed" do
+  context "each point in a clustered should contain all the data needed" do
     it " An x value" do
       clusters = Cluda::Kmeans.classify( list_a )
       clusters[clusters.keys.first].all? { |point| point.fetch(:x, nil) }.should be_true
@@ -150,8 +150,8 @@ describe Cluda::Kmeans do
     
     it "devide data correctly for 2 clusters one created by CluDA" do
       clusters = Cluda::Kmeans.classify( list_c )
-      centroids = clusters.keys
-      #Cluda::Kmeans.classify( list_d, centroids: centroids ).keys.size.should == 2
+      centroids = Cluda.median_for_centroids( clusters )
+      Cluda::Kmeans.classify( list_d, centroids: centroids, be_smart: true ).keys.size.should == 2
     end
   end
 end
