@@ -21,17 +21,18 @@ Cluda::X.classify( list, k: K, distance_method: DISTANCE, max_iterations: MAX )
 ```
 
 Mandatory:
- * list             =>  List of points that you wish to classify
+ * list                       =>  List of points that you wish to classify
 
 Optional:
- * k                => Number of clusters
- * centroids        => If you wish to work with specific initial centroids
- * distance_method  => Should be a string in lowercase and can be: 
-                         * 'euclidean' (default)
-                         * 'manhattan'
-                         * 'chebyshev'
- * be_smart         => In case is necessary CluDA will create new centroids to the set passed as parameter 
- * max_iterations   => Natural > 0 for local minimums. 50 (default)
+ * k                          => Number of clusters. 1 (default)
+ * centroids                  => If you wish to work with specific initial centroids
+ * distance_method            => Should be a string in lowercase and can be: 
+                                   * 'euclidean' (default)
+                                   * 'manhattan'
+                                   * 'chebyshev'
+ * be_smart                   => In case is necessary CluDA will create new centroids to the set passed as parameter. False (default) 
+ * margin_distance_percentage => In case using Smart Clustering be careful with the distances for the centroids. Cluda will create as many centroids as it sees from the data. This parameter is a way to control the number of clusters. Should be a number between 0 and 1. 0 (default)
+ * max_iterations             => Natural > 0 for local minimums. 50 (default)
 
 The output will always be an hash with the centroids and the points clustered to the corresponding centroid.
 
