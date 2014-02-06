@@ -151,7 +151,7 @@ describe Cluda::Kmeans do
     it "devide data correctly for 2 clusters one created by CluDA" do
       clusters = Cluda::Kmeans.classify( list_c )
       centroids = Cluda.median_for_centroids( clusters )
-      Cluda::Kmeans.classify( list_d, centroids: centroids, be_smart: true ).keys.size.should == 2
+      Cluda::Kmeans.classify( list_c + list_d, centroids: centroids, be_smart: true, margin_distance_percentage: 0.5 ).keys.size.should == 2
     end
     
     it "don't create another cluster when is not necessary" do
