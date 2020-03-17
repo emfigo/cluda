@@ -12,11 +12,11 @@ task :environment do
   require 'cluda'
 end
 
-task :console => :environment do 
+task :console => :environment do
   require 'pry'
 
-  Pry.config.prompt = [ 
-    proc { "cluda> "} 
+  Pry.config.prompt = [
+    proc { "cluda> "}
   ]
 
   Pry.start

@@ -3,7 +3,7 @@ module Cluda
   class InvalidCentroid < RuntimeError; end
   class InvalidSmartPoint < RuntimeError; end
   class InvalidDistanceMethod < RuntimeError; end
-  
+
   # For an output given by CluDA calculate the means for each centroid
   #
   #Example:
@@ -24,46 +24,46 @@ module Cluda
       centroid.merge( median: median_for_centroid( centroid, points ) )
     end
   end
-  
+
   protected
-  
+
   def self.valid_class?( name )
     ['euclidean', 'chebyshev', 'manhattan'].include?( name.downcase )
   end
 
   def self.validate_centroids( centroids )
-    centroids = centroids.is_a?(Array) ? centroids : [ centroids ]  
-    
+    centroids = centroids.is_a?(Array) ? centroids : [ centroids ]
+
     validate(centroids)
-   
+
     centroids.each do |point|
       raise InvalidCentroid unless  point.include?(:median)
     end
 
     centroids
   end
-  
+
   def self.validate_smart_points( points )
-    points = points.is_a?(Array) ? points : [ points ]  
-    
+    points = points.is_a?(Array) ? points : [ points ]
+
     validate( points )
-   
+
     points.each do |point|
       raise InvalidSmartPoint unless  point.include?(:distance)
     end
 
     points
   end
-  
+
   def self.validate( data )
-    points = data.is_a?(Array) ? data : [ data ]  
+    points = data.is_a?(Array) ? data : [ data ]
     points.each do |point|
-      raise InvalidPoint unless  point.is_a?(Hash) &&  
+      raise InvalidPoint unless  point.is_a?(Hash) &&
                                  point.include?(:x) && point.include?(:y) &&
                                  point[:x].is_a?(Numeric) && point[:y].is_a?(Numeric)
     end
 
-    points 
+    points
   end
 
   def self.median_for_centroid( centroid, points )

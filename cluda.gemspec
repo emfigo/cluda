@@ -16,6 +16,6 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 2.3'
 
-  s.add_development_dependency(%q<rspec>, [">= 2.11"])
+  s.add_development_dependency(%q<rspec>, [">= 3.8"])
   s.add_development_dependency(%q<rake>, [">= 12.3.3"])
 end
