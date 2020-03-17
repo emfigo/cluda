@@ -1,16 +1,21 @@
+$LOAD_PATH.unshift File.expand_path('.')
+require 'lib/cluda/version'
+
 Gem::Specification.new do |s|
   s.name           = 'cluda'
-  s.version        = '0.0.2'
+  s.version        = Cluda::VERSION
   s.date           = "#{Time.now.strftime("%Y-%m-%d")}"
   s.summary        = 'CLuDA'
   s.license        = 'MIT'
   s.description    = 'CLustering Data Analysis gem'
-  s.authors        = ['Enrique Figuerola']
-  s.email          = 'hard_rock15@msn.com'
-  s.files          = ['lib/cluda.rb', 'lib/cluda/cluda_common.rb', 'lib/cluda/kmeans.rb', 'lib/cluda/distances/distance.rb', 'lib/cluda/distances/euclidean.rb', 'lib/cluda/distances/manhattan.rb', 'lib/cluda/distances/chebyshev.rb']
+  s.authors        = ['Enrique M Figuerola Gomez']
+  s.email          = 'me@emfigo.com'
+  s.files          = Dir.glob('lib/**/*')
   s.require_paths  = ['lib']
   s.homepage       = 'https://github.com/emfigo/cluda'
 
-  s.add_development_dependency(%q<rspec>, [">= 2.11.0"])
-  s.add_development_dependency(%q<rake>, [">= 0"])
+  s.required_ruby_version = '>= 2.3'
+
+  s.add_development_dependency(%q<rspec>, [">= 2.11"])
+  s.add_development_dependency(%q<rake>, [">= 12.3.3"])
 end

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    cluda (0.0.2)
+    cluda (0.1.0)
 
 GEM
   remote: http://rubygems.org/
@@ -13,7 +13,7 @@ GEM
       coderay (~> 1.0)
       method_source (~> 0.8)
       slop (~> 3.4)
-    rake (10.1.1)
+    rake (13.0.1)
     rspec (2.14.1)
       rspec-core (~> 2.14.0)
       rspec-expectations (~> 2.14.0)
@@ -30,5 +30,8 @@ PLATFORMS
 DEPENDENCIES
   cluda!
   pry
-  rake
-  rspec (>= 2.11.0)
+  rake (>= 12.3.3)
+  rspec (>= 2.11)
+
+BUNDLED WITH
+   1.17.2

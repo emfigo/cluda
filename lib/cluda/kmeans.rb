@@ -5,9 +5,9 @@ require 'cluda/distances/chebyshev'
 module Cluda
   class Kmeans
 
-    DEFAULT_OPTS = { k: 1, 
-                     centroids: nil, 
-                     distance_method: 'euclidean', 
+    DEFAULT_OPTS = { k: 1,
+                     centroids: nil,
+                     distance_method: 'euclidean',
                      be_smart: false,
                      margin_distance_percentage: 0,
                      max_iterations: 50 }
@@ -27,13 +27,13 @@ module Cluda
     #   max_iterations:             (Numeric) *optional*
     def self.classify( list, opts = {} )
       @opts = DEFAULT_OPTS.merge(opts)
-      
+
       raise Cluda::InvalidDistanceMethod unless Cluda::valid_class?(@opts[:distance_method])
-     
+
       _class = Cluda.const_get( @opts[:distance_method].downcase.capitalize )
-      
-      Cluda.validate( list ) 
-      Cluda.validate_centroids( @opts[:centroids] ) if @opts[:be_smart] 
+
+      Cluda.validate( list )
+      Cluda.validate_centroids( @opts[:centroids] ) if @opts[:be_smart]
 
       iter = 1
       max_iterations             = @opts[:max_iterations]
@@ -48,7 +48,7 @@ module Cluda
 
         list.each do |point|
           centroid, distance = nearest_centroid(point, centroids, _class)
-          
+
           if smart_clustering && distance > ( @median_centroid + margin )
             @median_centroid = distance
             centroids << point
@@ -68,13 +68,13 @@ module Cluda
       output
     end
 
-    protected 
+    protected
 
     def self.nearest_centroid(point, centroids, _class = Cluda::Euclidean )
       return nil if centroids.empty?
-      
+
       Cluda.validate( point )
-      
+
       nearest_centroid = centroids[0]
       min_distance = _class.distance(point, nearest_centroid)
 
@@ -94,12 +94,12 @@ module Cluda
 
       return [] if list.empty? || k > list.size
 
-      list.shuffle( random: Random.new.rand(0...k) )[0...k]
+      list.shuffle( random: Random.new(rand(0...k)) )[0...k]
     end
 
-    private 
+    private
 
-    def self.init_output(centroids) 
+    def self.init_output(centroids)
       centroids.each_with_object({}) do |centroid, memo|
         memo[centroid] = []
       end
@@ -112,7 +112,7 @@ module Cluda
     def self.process_centroids(centroids)
       centroids.each_with_object([]) do |point, memo|
         @median_centroid = point[:median] if @median_centroid.nil?  || @median_centroid < point[:median]
-          
+
         memo << { x: point[:x], y: point[:y] }
       end
     end
@@ -120,13 +120,13 @@ module Cluda
     def self.get_key_values( points, key )
       points.map { |point| point[key] }
     end
-    
+
     def self.move_centroids( output )
       output.map do |(key, value)|
         unless value.empty?
           x = Cluda.median( get_key_values(value, :x) )
           y = Cluda.median( get_key_values(value, :y) )
-        
+
           { x: x, y: y }
         end
       end.compact
