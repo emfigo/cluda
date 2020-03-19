@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.describe Cluda::Manhattan do
@@ -7,7 +9,7 @@ RSpec.describe Cluda::Manhattan do
 
   describe '.distance' do
     it 'does not calculate any distance for a none valid point' do
-      expect{ Cluda::Manhattan.distance(valid_point, not_valid_point) }.to raise_error( Cluda::InvalidPoint )
+      expect { Cluda::Manhattan.distance(valid_point, not_valid_point) }.to raise_error(Cluda::InvalidPoint)
     end
 
     it 'calculates the distance for specific points' do

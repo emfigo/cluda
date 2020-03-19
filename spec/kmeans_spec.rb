@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 # 10   k     l
@@ -23,154 +25,349 @@ require 'spec_helper'
 # 0   1     2    3     4     5     6     7     8     9     10
 
 RSpec.describe Cluda::Kmeans do
-  let(:point_a)         { { x: 1, y: 1} }
-  let(:point_b)         { { x: 2, y: 1} }
-  let(:point_c)         { { x: 1, y: 2} }
-  let(:point_d)         { { x: 2, y: 2} }
-  let(:point_e)         { { x: 4, y: 6} }
-  let(:point_f)         { { x: 5, y: 7} }
-  let(:point_g)         { { x: 5, y: 6} }
-  let(:point_h)         { { x: 5, y: 5} }
-  let(:point_i)         { { x: 6, y: 6} }
-  let(:point_j)         { { x: 6, y: 5} }
-  let(:point_k)         { { x: 1, y: 10} }
-  let(:point_l)         { { x: 2, y: 10} }
-  let(:point_m)         { { x: 1, y: 9} }
-  let(:point_n)         { { x: 2, y: 9} }
-  let(:not_valid_point) { { x: -5 } }
-  let(:k_1)             { 2 }
+  describe '.initialize_centroids' do
+    let(:config) { { some_option: :a } }
+    let(:k) { 2 }
 
-  let(:empty_list)      { [] }
-  let(:list_a)          { [ point_a,
-                            point_b,
-                            point_c,
-                            point_d,
-                            point_e,
-                            point_f,
-                            point_g,
-                            point_h,
-                            point_i,
-                            point_j ] }
-  let(:list_b)          { [ point_e,
-                            point_f,
-                            point_g,
-                            point_h,
-                            point_i,
-                            point_j ] }
+    context 'when the list is empty' do
+      let(:list) { [] }
 
-  describe '.classify' do
-    it "verifies that all points are valid" do
-      not_valid_list = [ point_a, point_b, point_c, point_d, not_valid_point ]
+      context 'and k neighbours is specified' do
+        let(:config) { { k: k } }
+        let(:expected_config) { { k: k } }
 
-      expect{ Cluda::Kmeans.classify( not_valid_list, k: k_1 ) }.to raise_error(Cluda::InvalidPoint)
+        it 'returns the original config if no points are passed through' do
+          Cluda::Kmeans.initialize_centroids(list, config)
+
+          expect(config).to eq(expected_config)
+        end
+      end
     end
 
-    it "returns an empty list if no points are passed through" do
-      expect(Cluda::Kmeans.initialize_centroids( empty_list, k_1 )).to be_empty
+    context 'when the list is not empty' do
+      let(:list) do
+        [
+          { x: 1, y: 1 },
+          { x: 2, y: 1 },
+          { x: 1, y: 2 },
+          { x: 2, y: 2 },
+          { x: 4, y: 6 },
+          { x: 5, y: 7 },
+          { x: 5, y: 6 },
+          { x: 5, y: 5 },
+          { x: 6, y: 6 },
+          { x: 6, y: 5 }
+        ]
+      end
+
+      context 'and a valid k neighbours is specified' do
+        let(:config) { { k: k } }
+
+        it 'returns k random centroids in the config' do
+          Cluda::Kmeans.initialize_centroids(list, config)
+
+          expect(config[:centroids]).not_to be_empty
+          expect(config[:centroids].size).to eq(k)
+          expect(config[:centroids].all? { |centroid| list.include?(centroid) }).to eq(true)
+        end
+      end
+
+      context 'and an unvalid k neighbours is specified' do
+        let(:k) { list.size + 1 }
+        let(:config) { { k: k } }
+        let(:expected_config) { { k: k } }
+
+        it 'returns the original config if no points are passed through' do
+          Cluda::Kmeans.initialize_centroids(list, config)
+
+          expect(config).to eq(expected_config)
+        end
+      end
+    end
+  end
+
+  describe '.process_centroids' do
+    let(:config) { { centroids: list } }
+
+    context 'when the list is empty' do
+      let(:list) { [] }
+      let(:expected_config) { { centroids: list } }
+
+      it 'returns the original config if no points are passed through' do
+        Cluda::Kmeans.process_centroids(config)
+
+        expect(config).to eq(expected_config)
+      end
     end
 
-    it "returns k random centroids" do
-      centroids = Cluda::Kmeans.initialize_centroids( list_a, k_1 )
+    context 'when the list is not empty' do
+      let(:list) do
+        [
+          { x: 1, y: 1, median: 1 },
+          { x: 2, y: 1, median: 1 },
+          { x: 1, y: 2, median: 1 },
+          { x: 2, y: 2, median: 2 },
+          { x: 4, y: 6, median: 5 },
+          { x: 5, y: 7, median: 6 },
+          { x: 5, y: 6, median: 5 },
+          { x: 5, y: 5, median: 5 },
+          { x: 6, y: 6, median: 6 },
+          { x: 6, y: 5, median: 5 }
+        ]
+      end
 
-      expect(centroids.size).to eq(k_1)
-      expect(centroids.all?{ |centroid| list_a.include?(centroid) }).to eq(true)
+      let(:expected_config) do
+        config.merge(
+          centroids: [
+            { x: 1, y: 1 },
+            { x: 2, y: 1 },
+            { x: 1, y: 2 },
+            { x: 2, y: 2 },
+            { x: 4, y: 6 },
+            { x: 5, y: 7 },
+            { x: 5, y: 6 },
+            { x: 5, y: 5 },
+            { x: 6, y: 6 },
+            { x: 6, y: 5 }
+          ],
+          median_centroid: 6
+        )
+      end
+
+      it 'process the centroids in the config' do
+        Cluda::Kmeans.process_centroids(config)
+
+        expect(config).to eq(expected_config)
+      end
     end
   end
 
   describe '.nearest_centroid' do
-    context "when centroids are empty" do
-      it "return nil for empty centroids a point is passed" do
-        expect(Cluda::Kmeans.nearest_centroid( point_a, empty_list )).to be_nil
+    context 'when centroids are empty' do
+      let(:list)  { [] }
+      let(:point) { { x: 1, y: 1 } }
+
+      it 'return nil for empty centroids a point is passed' do
+        expect(Cluda::Kmeans.nearest_centroid(point, list)).to be_nil
       end
     end
+
     context 'when centroids are not empty' do
+      let(:list)  { [{ x: 1, y: 1 }] }
+
       context 'and a none valid point is passed' do
-        it "raises a Cluda::InvalidPoint" do
-          expect{ Cluda::Kmeans.nearest_centroid(not_valid_point, [point_a]) }.
-            to raise_error( Cluda::InvalidPoint )
+        let(:point) { { x: -5 } }
+
+        it 'raises a Cluda::InvalidPoint' do
+          expect { Cluda::Kmeans.nearest_centroid(point, list) }.to raise_error(Cluda::InvalidPoint)
         end
       end
+
       context 'and a valid point is passed' do
-        it "calculates the nearest centroid correctly" do
-          expect(Cluda::Kmeans.nearest_centroid( point_a, [point_a, point_j] )[0]).to eq(point_a)
-          expect(Cluda::Kmeans.nearest_centroid( point_a, [point_j] )[0]).to eq(point_j)
-          expect(Cluda::Kmeans.nearest_centroid( point_a, [point_h, point_j] )[0]).to eq(point_h)
+        let(:point)   { { x: 1, y: 1 } }
+        let(:point_a) { { x: 1, y: 1 } }
+        let(:point_h) { { x: 5, y: 5 } }
+        let(:point_j) { { x: 6, y: 5 } }
+
+        it 'calculates the nearest centroid correctly' do
+          expect(Cluda::Kmeans.nearest_centroid(point, [point_a, point_j])[0]).to eq(point_a)
+          expect(Cluda::Kmeans.nearest_centroid(point, [point_j])[0]).to eq(point_j)
+          expect(Cluda::Kmeans.nearest_centroid(point, [point_h, point_j])[0]).to eq(point_h)
         end
       end
     end
   end
 
   describe '.classify' do
-    let(:k_2)             { 1 }
-    let(:k_3)             { 3 }
+    let(:k) { 1 }
 
-    it 'devides correctly the data for one cluster' do
-      clusters = Cluda::Kmeans.classify( list_a, k: k_2 )
-      expect(clusters.keys.size).to eq(k_2)
+    context 'when the list of points contains an invalid point' do
+      let(:list) do
+        [
+          { x: 1, y: 1 },
+          { x: 2, y: 1 },
+          { x: 1, y: 2 },
+          { x: 2, y: 2 },
+          { x: -5 }
+        ]
+      end
 
-      _clusters = clusters[ clusters.keys.first ].map{ |point| { x: point[:x], y: point[:y] } }
-      expect(_clusters).to  eq(list_a)
-    end
-
-    it 'devides correctly the data for more than 2 centroids in a compact cloud of points' do
-      clusters = Cluda::Kmeans.classify( list_b, k: k_3 )
-      expect(clusters.keys.size).to eq(k_3)
-    end
-
-    it 'devides correctly the data for more than one cluster' do
-      cluster_a = [ point_a, point_b, point_c, point_d ]
-      cluster_b = [ point_e, point_f, point_g, point_h, point_i, point_j]
-
-      clusters = Cluda::Kmeans.classify( list_a, k: k_1 )
-      expect(clusters.keys.size).to eq(k_1)
-
-      clusters.each do |(key,value)|
-        _value = value.map{ |point| { x: point[:x], y: point[:y] } }
-        expect([cluster_a, cluster_b].include?(_value)).to eq(true)
+      it 'raises a Cluda::InvalidPoint error' do
+        expect { Cluda::Kmeans.classify(list, k: k) }.to raise_error(Cluda::InvalidPoint)
       end
     end
 
-    it 'contains an x value' do
-      clusters = Cluda::Kmeans.classify( list_a )
-      expect(clusters[clusters.keys.first].all? { |point| point.fetch(:x, nil) }).to eq(true)
-    end
+    context 'when the list of points is valid' do
+      let(:list) do
+        [
+          { x: 1, y: 1 },
+          { x: 2, y: 1 },
+          { x: 1, y: 2 },
+          { x: 2, y: 2 },
+          { x: 4, y: 6 },
+          { x: 5, y: 7 },
+          { x: 5, y: 6 },
+          { x: 5, y: 5 },
+          { x: 6, y: 6 },
+          { x: 6, y: 5 }
+        ]
+      end
 
-    it 'contains an y value' do
-      clusters = Cluda::Kmeans.classify( list_a )
-      expect(clusters[clusters.keys.first].all? { |point| point.fetch(:y, nil) }).to eq(true)
-    end
+      it 'contains an x value' do
+        clusters = Cluda::Kmeans.classify(list)
+        expect(clusters[clusters.keys.first].all? { |point| point.fetch(:x, nil) }).to eq(true)
+      end
 
-    it 'contains a distance' do
-      clusters = Cluda::Kmeans.classify( list_a )
-      expect(clusters[clusters.keys.first].all? { |point| point.fetch(:distance, nil) }).to eq(true)
+      it 'contains an y value' do
+        clusters = Cluda::Kmeans.classify(list)
+        expect(clusters[clusters.keys.first].all? { |point| point.fetch(:y, nil) }).to eq(true)
+      end
+
+      it 'contains a distance' do
+        clusters = Cluda::Kmeans.classify(list)
+        expect(clusters[clusters.keys.first].all? { |point| point.fetch(:distance, nil) }).to eq(true)
+      end
+
+      context 'and it has one cluster' do
+        let(:list) do
+          [
+            { x: 1, y: 1 },
+            { x: 2, y: 1 },
+            { x: 1, y: 2 },
+            { x: 2, y: 2 },
+            { x: 4, y: 6 },
+            { x: 5, y: 7 },
+            { x: 5, y: 6 },
+            { x: 5, y: 5 },
+            { x: 6, y: 6 },
+            { x: 6, y: 5 }
+          ]
+        end
+
+        it 'devides correctly the data' do
+          clusters = Cluda::Kmeans.classify(list, k: k)
+          expect(clusters.keys.size).to eq(k)
+
+          clusters_ = clusters[clusters.keys.first].map { |point| { x: point[:x], y: point[:y] } }
+          expect(clusters_).to eq(list)
+        end
+      end
+
+      context 'and it has more than 2 centroids in a compact cloud of points' do
+        let(:k) { 3 }
+        let(:list) do
+          [
+            { x: 4, y: 6 },
+            { x: 5, y: 7 },
+            { x: 5, y: 6 },
+            { x: 5, y: 5 },
+            { x: 6, y: 6 },
+            { x: 6, y: 5 }
+          ]
+        end
+
+        it 'devides correctly the data' do
+          clusters = Cluda::Kmeans.classify(list, k: k)
+
+          expect(clusters.keys.size).to eq(k)
+        end
+      end
+
+      context 'and it has more than one cluster' do
+        let(:k) { 2 }
+        let(:list) do
+          [
+            { x: 1, y: 1 },
+            { x: 2, y: 1 },
+            { x: 1, y: 2 },
+            { x: 2, y: 2 },
+            { x: 4, y: 6 },
+            { x: 5, y: 7 },
+            { x: 5, y: 6 },
+            { x: 5, y: 5 },
+            { x: 6, y: 6 },
+            { x: 6, y: 5 }
+          ]
+        end
+
+        it 'devides correctly the data for more than one cluster' do
+          cluster_a = [
+            { x: 1, y: 1 },
+            { x: 2, y: 1 },
+            { x: 1, y: 2 },
+            { x: 2, y: 2 }
+          ]
+          cluster_b = [
+            { x: 4, y: 6 },
+            { x: 5, y: 7 },
+            { x: 5, y: 6 },
+            { x: 5, y: 5 },
+            { x: 6, y: 6 },
+            { x: 6, y: 5 }
+          ]
+
+          clusters = Cluda::Kmeans.classify(list, k: k)
+          expect(clusters.keys.size).to eq(k)
+
+          clusters.each do |(_key, value)|
+            value_ = value.map { |point| { x: point[:x], y: point[:y] } }
+            expect([cluster_a, cluster_b].include?(value_)).to eq(true)
+          end
+        end
+      end
     end
 
     context 'when smart clustering is enabled' do
-      let(:list_c)          { [ point_a,
-                                point_b,
-                                point_c,
-                                point_d ] }
-      let(:list_d)          { [ point_k,
-                                point_l,
-                                point_m,
-                                point_n ] }
+      let(:list) do
+        [
+          { x: 1, y: 1 },
+          { x: 2, y: 1 },
+          { x: 1, y: 2 },
+          { x: 2, y: 2 },
+          { x: 4, y: 6 },
+          { x: 5, y: 7 },
+          { x: 5, y: 6 },
+          { x: 5, y: 5 },
+          { x: 6, y: 6 },
+          { x: 6, y: 5 }
+        ]
+      end
 
-      it 'devides data correctly for 2 clusters one created by CluDA and distance percentage of 50%' do
-        clusters = Cluda::Kmeans.classify( list_c )
-        centroids = Cluda.median_for_centroids( clusters )
-
-        expect(Cluda::Kmeans.classify( list_c + list_d,
-                                      centroids: centroids,
-                                      be_smart: true,
-                                      margin_distance_percentage: 0.5
-                                     ).keys.size).to eq(2)
+      let(:list_c) do
+        [
+          { x: 1, y: 1 },
+          { x: 2, y: 1 },
+          { x: 1, y: 2 },
+          { x: 2, y: 2 }
+        ]
       end
 
       it 'does not create another cluster when is not necessary' do
-        clusters = Cluda::Kmeans.classify( list_a )
-        centroids = Cluda.median_for_centroids( clusters )
+        clusters = Cluda::Kmeans.classify(list)
+        centroids = Cluda.median_for_centroids(clusters)
 
-        expect(Cluda::Kmeans.classify( list_c, centroids: centroids, be_smart: true ).keys.size).to eq(1)
+        expect(Cluda::Kmeans.classify(list_c, centroids: centroids, be_smart: true).keys.size).to eq(1)
+      end
+
+      context 'and 2 clusters generated, one created by CluDA and distance percentage of 50%' do
+        let(:list_d) do
+          [
+            { x: 1, y: 10 },
+            { x: 2, y: 10 },
+            { x: 1, y: 9 },
+            { x: 2, y: 9 }
+          ]
+        end
+
+        it 'devides data correctly' do
+          clusters = Cluda::Kmeans.classify(list_c)
+          centroids = Cluda.median_for_centroids(clusters)
+
+          expect(Cluda::Kmeans.classify(list_c + list_d,
+                                        centroids: centroids,
+                                        be_smart: true,
+                                        margin_distance_percentage: 0.5).keys.size).to eq(2)
+        end
       end
     end
   end
